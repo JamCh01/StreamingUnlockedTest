@@ -24,7 +24,12 @@ class Browser:
     def _init_browser(self, loop: loop_typing = None) -> Launcher:
         loop = loop or asyncio.get_event_loop()
         self.browser = loop.run_until_complete(
-            pyppeteer.launch(headless=True, args=self.args, dumpio=True)
+            pyppeteer.launch(
+                headless=True,
+                args=self.args,
+                dumpio=True,
+                executablePath="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+            )
         )
 
         return self.browser
@@ -64,7 +69,7 @@ class Page:
         loop = loop or asyncio.get_event_loop()
         loop.run_until_complete(self.page.type(css_selector, s))
 
-    def content(self, loop: loop_typing = None):
+    def content(self, loop: loop_typing = None) -> str:
         loop = loop or asyncio.get_event_loop()
         content = loop.run_until_complete(
             self.page.evaluate("""document.body.innerText""", force_expr=True)
@@ -92,6 +97,15 @@ class Page:
                 options={"waitUntil": ["networkidle2"], "timeout": 60 * 1000},
             )
         )
+
+    def html(self, loop: loop_typing = None) -> str:
+        loop = loop or asyncio.get_event_loop()
+        s = loop.run_until_complete(
+            self.page.evaluate(
+                """document.documentElement.outerHTML""", force_expr=True
+            )
+        )
+        return s
 
     def scroll(self, loop: loop_typing = None):
         loop = loop or asyncio.get_event_loop()
