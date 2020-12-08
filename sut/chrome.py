@@ -115,3 +115,11 @@ class Page:
                 "{window.scrollBy(0, document.body.scrollHeight);}", force_expr=True
             )
         )
+
+    def reload(self, loop: loop_typing = None):
+        loop = loop or asyncio.get_event_loop()
+        loop.run_until_complete(
+            self.page.reload(
+                options={"waitUntil": ["networkidle2"], "timeout": 60 * 1000}
+            )
+        )
