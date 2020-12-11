@@ -8,27 +8,25 @@ DEFAULT_ARGS = [
     "--no-sandbox",
     "--disable-gpu",
     "--no-sandbox",
-    "--proxy-server=socks5://127.0.0.1:7890",
 ]
 loop_typing = Union[
     asyncio.unix_events.SelectorEventLoop,
-    # asyncio.windows_events.ProactorEventLoop,
     None,
 ]
 
 
 class Browser:
-    def __init__(self, args: List[str] = DEFAULT_ARGS) -> None:
+    def __init__(self, executable_path: str, args: List[str] = DEFAULT_ARGS) -> None:
         self.args = args
+        self.executable_path = executable_path
 
     def _init_browser(self, loop: loop_typing = None) -> Launcher:
         loop = loop or asyncio.get_event_loop()
         self.browser = loop.run_until_complete(
             pyppeteer.launch(
-                headless=True,
+                headless=False,
                 args=self.args,
-                dumpio=True,
-                executablePath="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                executablePath=self.executable_path,
             )
         )
 
@@ -56,6 +54,10 @@ class Page:
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:80.0) Gecko/20100101 Firefox/80.0"
             )
         )
+
+    def _close_page(self, loop: loop_typing = None) -> None:
+        loop = loop or asyncio.get_event_loop()
+        self.page = loop.run_until_complete(self.page.close())
 
     def click(self, css_selector: str, loop: loop_typing = None):
         loop = loop or asyncio.get_event_loop()

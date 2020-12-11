@@ -1,0 +1,10 @@
+{
+  "chrome": "/usr/bin/google-chrome-stable",
+  "login": {
+    "Netflix": {
+      "username": "",
+      "password": "",
+      "ext": { "is_family": true, "index": 3 }
+    }
+  }
+}
